@@ -12,7 +12,7 @@
                 <div class="row justify-content-center">
         
                     <div class="col-xl-5 col-md-8">
-                        <form class="bg-white rounded shadow-5-strong p-5 m-5">
+                        <form class="bg-white rounded shadow-5-strong p-5 m-5" action="{% url 'djangoapp:register' %}" method="post">
                             <div class="form-outline mb-4">
                                 <h2>Sign Up</h2>
                             </div>
@@ -33,7 +33,7 @@
 
                             <div class="form-outline mb-4">
                                 <label class="form-label" for="form1Example1">Password</label>
-                                <input type="password" id="password" class="form-control" placeholder="Enter Password"/>
+                                <input type="password" id="psw" class="form-control" placeholder="Enter Password"/>
                             </div>
                         </form>
                     </div>
