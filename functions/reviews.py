@@ -4,9 +4,9 @@ from flask import Flask, jsonify, request
 import atexit
 
 #Add your Cloudant service credentials here
-cloudant_username = ''
-cloudant_api_key = ''
-cloudant_url = ''
+cloudant_username = os.environ.get('COUCH_USERNAME')
+cloudant_api_key = os.environ.get('IAM_API_KEY')
+cloudant_url = os.environ.get('COUCH_URL')
 client = Cloudant.iam(cloudant_username, cloudant_api_key, connect=True, url=cloudant_url)
 
 session = client.session()
