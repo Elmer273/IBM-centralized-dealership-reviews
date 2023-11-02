@@ -2,6 +2,7 @@ from cloudant.client import Cloudant
 from cloudant.query import Query
 from flask import Flask, jsonify, request
 import atexit
+import os
 
 #Add your Cloudant service credentials here
 cloudant_username = os.environ.get('COUCH_USERNAME')
