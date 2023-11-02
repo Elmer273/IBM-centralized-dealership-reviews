@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
-# from .restapis import related methods
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -12,10 +12,6 @@ import json
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
-
-
-# Create your views here.
-
 
 # Create an `about` view to render a static about page
 def about(request):
@@ -80,16 +76,48 @@ def registration_request(request):
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-    context = {}
     if request.method == "GET":
-        return render(request, 'djangoapp/index.html', context)
+        url = "https://elmermartine-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(url)
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+        return HttpResponse(dealer_names)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    if request.method == "GET":
+        url = "https://elmermartine-5000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
+        dealer_reviews = ' '.join([dealer_review.review for dealer_review in reviews])
 
+        return HttpResponse(dealer_reviews)
+    
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            url = "https://elmermartine-5000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+            review = {
+                "id": 51,
+                "name": request.POST['name'],
+                "dealership": dealer_id,
+                "review": request.POST['review'],
+                "purchase": True,
+                "purchase_date": datetime.utcnow().isoformat(),
+                "car_make": request.POST['car_make'],
+                "car_model": request.POST['car_model'],
+                "car_year": request.POST['car_year'],
+            }
 
+            json_payload = dict()
+            json_payload["review"] = review
+            response = post_request(url, json_payload, dealer_id=dealer_id)
+
+            return HttpResponse(response)
+
+    else: 
+        print("User is not authenticated")
+        return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
