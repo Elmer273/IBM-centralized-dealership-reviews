@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
+from .models import CarModel
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request, get_dealer_by_id
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -76,47 +76,75 @@ def registration_request(request):
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
+    context = {}
     if request.method == "GET":
-        url = "https://elmermartine-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        url = "https://elmermartine-3000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        # url = "http://localhost:3000/dealerships/get"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
-        # Concat all dealer's short name
-        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-        # Return a list of dealer short name
-        return HttpResponse(dealer_names)
+        context["dealership_list"] = dealerships
+        return render(request, 'djangoapp/index.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, dealer_id):
+    context = {}
     if request.method == "GET":
-        url = "https://elmermartine-5000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
-        reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
-        dealer_reviews = ' '.join([dealer_review.review for dealer_review in reviews])
+        review_url = "https://elmermartine-5000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        # review_url = "http://127.0.0.1:5000/api/get_reviews"
+        reviews = get_dealer_reviews_from_cf(review_url, dealerId=dealer_id)
 
-        return HttpResponse(dealer_reviews)
+        dealer_url = "https://elmermartine-3000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        # dealer_url = "http://localhost:3000/dealerships/get"
+        dealer = get_dealer_by_id(dealer_url, dealer_id)  
+
+        context["dealer"] = dealer
+        context["dealer_id"] = dealer_id
+        context["reviews"] = reviews
+
+        return render(request, 'djangoapp/dealer_details.html', context)
     
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     if request.user.is_authenticated:
         if request.method == "POST":
             url = "https://elmermartine-5000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
-            review = {
+            # url = "http://127.0.0.1:5000/api/post_review"
+
+            purchase_check = False
+            if request.POST['purchasecheck'] == 'on':
+                purchase_check = True
+
+            car_model, car_make, car_year = request.POST['car_details'].split('-')
+            json_payload = {
                 "id": 51,
-                "name": request.POST['name'],
+                "name": f"{request.user.first_name} {request.user.last_name}",
                 "dealership": dealer_id,
                 "review": request.POST['review'],
-                "purchase": True,
+                "purchase": purchase_check,
                 "purchase_date": datetime.utcnow().isoformat(),
-                "car_make": request.POST['car_make'],
-                "car_model": request.POST['car_model'],
-                "car_year": request.POST['car_year'],
+                "car_make": car_make,
+                "car_model": car_model,
+                "car_year": car_year,
             }
 
-            json_payload = dict()
-            json_payload["review"] = review
-            response = post_request(url, json_payload, dealer_id=dealer_id)
+            post_request(url, json_payload)
 
-            return HttpResponse(response)
+            return redirect('djangoapp:dealer_details', dealer_id=dealer_id)
+        
+        elif request.method == "GET":
+            context = {}
+            dealer_url = "https://elmermartine-3000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+            # dealer_url = "http://localhost:3000/dealerships/get"
+
+            cars = list(CarModel.objects.filter(dealer_id=dealer_id))
+            dealer = get_dealer_by_id(dealer_url, dealer_id)  
+
+            context["dealer"] = dealer
+            context["dealer_id"] = dealer_id
+            context["cars"] = cars
+
+            return render(request, 'djangoapp/add_review.html', context)
 
     else: 
         print("User is not authenticated")

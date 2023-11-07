@@ -13,85 +13,118 @@
 </head>
 
     <body>
-    <!--Add a nav bar here -->
-    <nav class="navbar" style="background-color: #e3f2fd;">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="nav-item">
-                    <a class="btn" href="{% url 'djangoapp:about' %}">About Us</a>
-                    <a class="btn" href="{% url 'djangoapp:contact' %}">Contact Us</a>
-                    <button class="btn btn-outline-primary" type="submit">Login</button>
-                    <button class="btn btn-primary" type="submit">Signup</button>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <!--Text -->
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <h1> About Us</h1>
-        </div>
+        <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-header col-lg-3">
+                        <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
+                    </div>
     
-        <div class="row justify-content-center">
-            <h5>
-                Welcome to Best Cars dealership, home to the best cars in North America. We sell domestic and imported cars at reasonable prices.
-            </h5>
-        </div>
-
-        <div class="row pt-4 pl-4">
-            <h5>Who We Are</h5>
-            <p>
-                At Best Cars, we are more than just a car dealership – we are your trusted automotive partners. 
-                Our journey began with a shared passion for cars and a commitment to providing exceptional service. 
-                We understand that a car is not just a mode of transportation; it's an extension of your lifestyle and aspirations.
-            </p>
-        </div>
+                    {% if user.is_authenticated %}
+                        <ul class="nav navbar-nav col-lg-9 justify-content-end">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                            </li>
+            
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                            </li>
         
-        <div class="row pt-4 pl-4">
-            <h5>Our Mission</h5>
-            <p> Our mission is to make the car buying and ownership experience as seamless, enjoyable, and rewarding as possible. 
-                We believe that by offering a wide selection of top-quality vehicles, exceptional customer service, 
-                and expert guidance, we can help you find the perfect vehicle to suit your needs and preferences.
-            </p>
-        </div>
+                            <li class="nav-item">
+                                <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                            </li>
+                        </ul>
+                    {% else %}
+                        <ul class="nav navbar-nav col-lg-4 justify-content-end">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                            </li>
+            
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                            </li>
+                        </ul>
+                        <form class="form-inline col-lg-5 justify-content-end" action="{% url 'djangoapp:login' %}" method="post">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" class="form-control w-10 mr-1" placeholder="Username" name="username" id="username" >
+                                <input type="password" class="form-control w-10 mr-4" placeholder="Password" name="psw" id="password" >
+                                <button class="btn btn-outline-primary mr-2" type="submit">Login</button>
+                                <a class="btn btn-primary" href="{% url 'djangoapp:register' %}">Sign Up</a>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+                
+            </div>
+        </nav>
 
-        <div class="row pt-4 pl-4">
-            <h5>What Sets Us Apart</h5>
-            <p> We know that there are many options when it comes to choosing a car dealership. 
-                What sets us apart is our dedication to integrity, transparency, and your satisfaction. 
-                We don't just sell cars; we provide peace of mind, confidence, and a hassle-free car buying experience.
-            </p>
-        </div>
-
-        <div class="row pt-4 pl-4">
-            <h5>Our Team</h5>
-            <p>Our team is composed of passionate car enthusiasts, seasoned automotive experts, and customer-focused professionals. 
-                We come together with a shared commitment to provide you with the highest level of service. 
-                Whether you're searching for a family car, a luxury vehicle, a reliable commuter, or a powerful performance car, our team is here to guide you.
-            </p>
-        </div>
-
-        <div class="row pt-4 pl-4">
-            <h5>Our Promise</h5>
-            <p> We promise to offer you a wide selection of meticulously inspected and well-maintained vehicles. 
-                Your safety, happiness, and peace of mind are our top priorities. 
-                With our transparent pricing and flexible financing options, we aim to make your car ownership journey as enjoyable as possible.
-            </p>
-        </div>
-
-        <div class="row pt-4 pl-4">
-            <h5>Get in Touch</h5>
-            <p>Thank you for choosing Best Cars as your partner in finding the perfect vehicle. 
-                We look forward to helping you discover the car of your dreams. Feel free to visit our dealership, explore our inventory, and connect with our friendly team. 
-                Your journey towards automotive excellence begins here!
-            </p>
-        </div>
+    
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <h1> About Us</h1>
+            </div>
         
-    </div>
+            <div class="row justify-content-center">
+                <h5>
+                    Welcome to Best Cars dealership, home to the best cars in North America. We sell domestic and imported cars at reasonable prices.
+                </h5>
+            </div>
+
+            <div class="row pt-4 pl-4">
+                <h5>Who We Are</h5>
+                <p>
+                    At Best Cars, we are more than just a car dealership – we are your trusted automotive partners. 
+                    Our journey began with a shared passion for cars and a commitment to providing exceptional service. 
+                    We understand that a car is not just a mode of transportation; it's an extension of your lifestyle and aspirations.
+                </p>
+            </div>
+            
+            <div class="row pt-4 pl-4">
+                <h5>Our Mission</h5>
+                <p> Our mission is to make the car buying and ownership experience as seamless, enjoyable, and rewarding as possible. 
+                    We believe that by offering a wide selection of top-quality vehicles, exceptional customer service, 
+                    and expert guidance, we can help you find the perfect vehicle to suit your needs and preferences.
+                </p>
+            </div>
+
+            <div class="row pt-4 pl-4">
+                <h5>What Sets Us Apart</h5>
+                <p> We know that there are many options when it comes to choosing a car dealership. 
+                    What sets us apart is our dedication to integrity, transparency, and your satisfaction. 
+                    We don't just sell cars; we provide peace of mind, confidence, and a hassle-free car buying experience.
+                </p>
+            </div>
+
+            <div class="row pt-4 pl-4">
+                <h5>Our Team</h5>
+                <p>Our team is composed of passionate car enthusiasts, seasoned automotive experts, and customer-focused professionals. 
+                    We come together with a shared commitment to provide you with the highest level of service. 
+                    Whether you're searching for a family car, a luxury vehicle, a reliable commuter, or a powerful performance car, our team is here to guide you.
+                </p>
+            </div>
+
+            <div class="row pt-4 pl-4">
+                <h5>Our Promise</h5>
+                <p> We promise to offer you a wide selection of meticulously inspected and well-maintained vehicles. 
+                    Your safety, happiness, and peace of mind are our top priorities. 
+                    With our transparent pricing and flexible financing options, we aim to make your car ownership journey as enjoyable as possible.
+                </p>
+            </div>
+
+            <div class="row pt-4 pl-4">
+                <h5>Get in Touch</h5>
+                <p>Thank you for choosing Best Cars as your partner in finding the perfect vehicle. 
+                    We look forward to helping you discover the car of your dreams. Feel free to visit our dealership, explore our inventory, and connect with our friendly team. 
+                    Your journey towards automotive excellence begins here!
+                </p>
+            </div>
+            
+        </div>
     
 
     </body>

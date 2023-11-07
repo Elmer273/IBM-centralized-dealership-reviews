@@ -1,39 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    
-</head>
+    <head>
+        <meta charset="UTF-8">
+        {% load static %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        
+    </head>
+
     <body>
-        <div class="mask d-flex align-items-center" style="background-color: paleturquoise;">
+        <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-header col-lg-3">
+                        <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
+                    </div>
+                </div>
+                
+            </div>
+        </nav>
+
+        <div class="mask d-flex align-items-center" style="background-color: #b7dffb;">
             <div class="container">
                 <div class="row justify-content-center">
         
                     <div class="col-xl-5 col-md-8">
                         <form class="bg-white rounded shadow-5-strong p-5 m-5" action="{% url 'djangoapp:register' %}" method="post">
-                            <div class="form-outline mb-4">
+                            {% csrf_token %}
+                            <div class="d-flex mb-2">
                                 <h2>Sign Up</h2>
                             </div>
-                            <div class="form-outline mb-4">
+                            <div class="form-group mb-4">
                                 <label class="form-label" for="username">Username</label>
-                                <input type="text" id="username" class="form-control" placeholder="Enter Username" />
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Enter Username" />
                             </div>
 
-                            <div class="form-outline mb-4">
+                            <div class="form-group mb-4">
                                 <label class="form-label" for="first_name">First Name</label>
-                                <input type="text" id="first_name" class="form-control" placeholder="Enter First Name"/>
+                                <input type="text" id="first_name" name="first_name" class="form-control" placeholder="Enter First Name"/>
                             </div>
 
-                            <div class="form-outline mb-4">
+                            <div class="form-group mb-4">
                                 <label class="form-label" for="last_name">Last Name</label>
-                                <input type="text" id="last_name" class="form-control" placeholder="Enter Last Name" />
+                                <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Enter Last Name" />
                             </div>
 
-                            <div class="form-outline mb-4">
+                            <div class="form-group mb-4">
                                 <label class="form-label" for="form1Example1">Password</label>
-                                <input type="password" id="psw" class="form-control" placeholder="Enter Password"/>
+                                <input type="password" id="psw" name="psw" class="form-control" placeholder="Enter Password"/>
+                            </div>
+
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-outline-primary mr-2" type="submit">Sign Up</button>
                             </div>
                         </form>
                     </div>

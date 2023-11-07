@@ -37,14 +37,10 @@ def get_request(url, **kwargs):
 # Make HTTP POST requests
 def post_request(url, json_payload, **kwargs):
    try:
-      response = requests.post(url, params=kwargs, json=json_payload)
+      requests.post(url, params=kwargs, json=json_payload)
    except:
       # If any error occurs
       print("Network exception occurred")
-   status_code = response.status_code
-   print("With status {} ".format(status_code))
-   json_data = json.loads(response.text)
-   return json_data
 
 # Get dealers from a cloud function
 def get_dealers_from_cf(url, **kwargs):
@@ -67,7 +63,6 @@ def get_dealers_from_cf(url, **kwargs):
 
 def get_dealer_by_id(url, dealerId):
    # Call get_request with a URL and ID parameter
-   results = []
    json_result = get_request(url, id=dealerId)
    if json_result:
       dealers = json_result
@@ -78,9 +73,8 @@ def get_dealer_by_id(url, dealerId):
                                  id=dealer["id"], lat=dealer["lat"], long=dealer["long"],
                                  short_name=dealer["short_name"],
                                  st=dealer["st"], state=dealer["state"], zip=dealer["zip"])
-         results.append(dealer_obj)
 
-   return results
+   return dealer_obj
 
 def get_dealer_by_state(url, state):
    # Call get_request with a URL and ID parameter
